@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+<body>
+  <!-- Создание элемента canvas с заданными размерами и идентификатором -->
+  <canvas id="myCanvas" width="800" height="648"></canvas>
+  <script>
+    // Получение ссылки на элемент canvas
+    const canvas = document.getElementById("myCanvas");
+    // Создание двумерного контекста рисования
+    const ctx = canvas.getContext("2d");
+
+
+    // Игровые объекты 
+    
+    // Подложка
+    const background = new Image();
+    background.src = 'background.png';
+    background.onload = function() {
+      // Отображение изображения на холсте
+      ctx.drawImage(background, 0, 0, 800, 648);
+    }
+
+    // То, что прыгает
+    function drawCircle(x, y, radius) {
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = 'red';
+      ctx.fill();
+    }
+
+    // Состояние игры
+    background_position = 0
+    theThingToJumpState = -10
+    is_jump = false
+
+
+    // Описание анимаций
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function moveBackgroud() {
+        dx = -1;
+        dy = 0;
+
+        if (background_position > -800) {
+            background_position += dx
+        }
+        else {
+            background_position = 0
+        }
+
+        ctx.drawImage(background, background_position, 0, 1600, 648);
+    }
+
+    function move_TheThingToJump() {
+        center_y = 324
+        center_x = 400
+        
+        dy = -theThingToJumpState*theThingToJumpState + 100
+
+        drawCircle(center_x, center_y - dy, 50);
+
+        if(theThingToJumpState < 10 && is_jump)
+            theThingToJumpState += 0.1;
+        else {
+            theThingToJumpState = -10;
+            is_jump = false
+        }
+    }
+
+    // Обработка ввода
+    document.addEventListener('keydown', event => {
+        if (event.code === 'Space') {
+            console.log('Пробел нажат');
+            is_jump = true
+        }
+    });
+
+    // Игровой цикл
+    function animation_loop() {
+        clearCanvas() 
+        moveBackgroud()
+        move_TheThingToJump()
+
+         // Вызов функции обновления координат через определенный интервал времени
+        requestAnimationFrame(animation_loop);
+    }
+    
+    animation_loop()
+  </script>
+</body>
+</html>
